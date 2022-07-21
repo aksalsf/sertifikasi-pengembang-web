@@ -23,12 +23,15 @@ class User extends Authenticatable
         'password',
         'role_id',
         'birthinfo',
+        'birthdate',
         'address',
         'phone',
         'photo',
         'math',
         'indonesian',
         'english',
+        'total_gpa',
+        'report_attachment',
     ];
 
     /**

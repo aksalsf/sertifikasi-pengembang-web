@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -32,21 +34,44 @@ class UserResource extends Resource
             ->schema([
                 Card::make([
                     TextInput::make('name')
-                    ->label('Nama'),
+                        ->label('Nama')
+                        ->disabled(),
                     TextInput::make('birthinfo')
-                        ->label('TTL'),
+                        ->label('Tempat Lahir')
+                        ->disabled(),
+                    DatePicker::make('birthdate')
+                        ->label('Tanggal Lahir')
+                        ->disabled(),
                     TextInput::make('address')
-                        ->label('Alamat'),
+                        ->label('Alamat')
+                        ->disabled(),
                     TextInput::make('phone')
-                        ->label('Telp'),
+                        ->label('Telp')
+                        ->disabled(),
                     TextInput::make('email')
-                        ->label('Email'),
+                        ->label('Email')
+                        ->disabled(),
                     TextInput::make('math')
-                        ->label('Nilai Matematika'),
+                        ->label('Nilai Matematika')
+                        ->disabled(),
                     TextInput::make('indonesian')
-                        ->label('Nilai Bahasa Indonesia'),
+                        ->label('Nilai Bahasa Indonesia')
+                        ->disabled(),
                     TextInput::make('english')
-                        ->label('Nilai Bahasa Inggris'),
+                        ->label('Nilai Bahasa Inggris')
+                        ->disabled(),
+                    FileUpload::make('photo')
+                        ->label('Foto')
+                        ->image()
+                        ->required()
+                        ->enableDownload()
+                        ->disabled(),
+                    FileUpload::make('report_attachment')
+                        ->label('Laporan')
+                        ->required()
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->enableDownload()
+                        ->disabled(),
 
                 ])
             ]);
@@ -58,42 +83,35 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('Nama'),
-                TextColumn::make('birthinfo')
-                    ->label('TTL'),
-                TextColumn::make('address')
-                    ->label('Alamat'),
-                TextColumn::make('phone')
-                    ->label('Telp'),
-                TextColumn::make('email')
-                    ->label('Email'),
                 BadgeColumn::make('math')
-                    ->label('Nilai Matematika')
+                    ->label('Matematika')
                     ->colors([
                         'danger',
                         'warning' => fn($state): bool => $state >= 70,
                         'success' => fn($state): bool => $state >= 80,
                     ]),
                 BadgeColumn::make('indonesian')
-                    ->label('Nilai Bahasa Indonesia')
+                    ->label('Bahasa Indonesia')
                     ->colors([
                         'danger',
                         'warning' => fn($state): bool => $state >= 70,
                         'success' => fn($state): bool => $state >= 80,
                     ]),
                 BadgeColumn::make('english')
-                    ->label('Nilai Bahasa Inggris')
+                    ->label('Bahasa Inggris')
                     ->colors([
                         'danger',
                         'warning' => fn($state): bool => $state >= 70,
                         'success' => fn($state): bool => $state >= 80,
                     ]),
                 BadgeColumn::make('total_gpa')
-                    ->label('Total Nilai')
+                    ->label('Rata-rata')
                     ->colors([
                         'danger',
                         'warning' => fn($state): bool => $state >= 70,
                         'success' => fn($state): bool => $state >= 80,
-                    ]),
+                    ])
+                    ->sortable(),
                 BadgeColumn::make('registration_status')
                     ->label('Status Pendaftaran')
                     ->colors([

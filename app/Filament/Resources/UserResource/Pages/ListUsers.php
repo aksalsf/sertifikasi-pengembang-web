@@ -22,6 +22,11 @@ class ListUsers extends ListRecords
         return [];
     }
 
+    public function isTableSelectionEnabled(): bool
+    {
+        return false;
+    }
+
     public function proceedRegistration($data)
     {
         $payload = collect($data);

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -37,32 +38,62 @@ class DataPendaftaran extends Page implements HasForms
             Card::make([
                 TextInput::make('name')
                     ->label('Nama')
+                    ->required()
                     ->default($this->user->name),
                 TextInput::make('birthinfo')
-                    ->label('TTL')
+                    ->label('Tempat Lahir')
+                    ->required()
                     ->default($this->user->birthinfo),
+                DatePicker::make('birthdate')
+                    ->label('Tanggal Lahir')
+                    ->required()
+                    ->default($this->user->birthdate),
                 TextInput::make('address')
                     ->label('Alamat')
+                    ->required()
                     ->default($this->user->address),
                 TextInput::make('phone')
                     ->label('Telp')
+                    ->required()
                     ->default($this->user->phone),
                 TextInput::make('email')
                     ->label('Email')
-                    ->default($this->user->email),
+                    ->required()
+                    ->default($this->user->email)
+                    ->disabled(),
                 TextInput::make('math')
                     ->label('Nilai Matematika')
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->required()
                     ->default($this->user->math),
                 TextInput::make('indonesian')
                     ->label('Nilai Bahasa Indonesia')
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->required()
                     ->default($this->user->indonesian),
                 TextInput::make('english')
                     ->label('Nilai Bahasa Inggris')
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->required()
                     ->default($this->user->english),
                 FileUpload::make('photo')
                     ->label('Foto')
                     ->image()
-                    ->default($this->user->photo),
+                    ->required()
+                    ->default($this->user->photo)
+                    ->enableDownload(),
+                FileUpload::make('report_attachment')
+                    ->label('Lampiran Rapor')
+                    ->required()
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->default($this->user->report_attachment)
+                    ->enableDownload(),
             ])
         ];
     }
@@ -75,30 +106,43 @@ class DataPendaftaran extends Page implements HasForms
         ];
     }
 
-    public function save(): void
+    protected function uploadFile($file)
     {
         $filepath = '';
-        $file = head($this->photo);
+        $file = head($file);
         if (is_string($file)) {
             $filepath = $file;
         } else if (!$file) {
             $filepath = '';
         } else {
             $this->filename = $file->getClientOriginalName();
-            $path = $file->store('public/pendaftaran');
+            $path = $file->store('public/');
             $filepath = str_replace('public/', '', $path);
         }
+        return $filepath;
+    }
+
+    public function save(): void
+    {
+        $this->validate();
+
+        $photo = $this->uploadFile($this->photo);
+        $report_attachment = $this->uploadFile($this->report_attachment);
+        $rata_rata = round(($this->math + $this->indonesian + $this->english) / 3, 2);
 
         User::find(auth()->user()->id)->update([
             'name' => $this->name,
             'birthinfo' => $this->birthinfo,
+            'birthdate' => $this->birthdate,
             'address' => $this->address,
             'phone' => $this->phone,
             'email' => $this->email,
             'math' => $this->math,
             'indonesian' => $this->indonesian,
             'english' => $this->english,
-            'photo' => $filepath,
+            'total_gpa' => $rata_rata,
+            'photo' => $photo,
+            'report_attachment' => $report_attachment,
         ]);
 
         $this->notify('success', 'Berhasil mengubah data!');

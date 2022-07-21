@@ -12,18 +12,8 @@ class EditUser extends EditRecord
 
     protected static ?string $title = 'Detail Pendaftar';
 
-    public function mount($record): void
-    {
-        abort_unless(auth()->user()->isAdmin(), 403);
-    }
-
     protected function getActions(): array
     {
-        return [
-            Actions\DeleteAction::make()
-                ->visible(function () {
-                    return auth()->user()->isAdmin();
-                }),
-        ];
+        return [];
     }
 }
