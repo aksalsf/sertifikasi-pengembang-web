@@ -61,9 +61,8 @@ class DataPendaftaran extends Page implements HasForms
                     ->default($this->user->english),
                 FileUpload::make('photo')
                     ->label('Foto')
-                    ->default($this->user->photo)
-                    ->directory('applications/pendaftaran'),
-
+                    ->image()
+                    ->default($this->user->photo),
             ])
         ];
     }

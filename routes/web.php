@@ -16,10 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/admin');
-    }
-    return view('registration');
+    return redirect('/login');
 });
 
-Route::post('/register', [RegisterController::class, 'create'])->name('register');
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
+
+Route::get('/register-success', function () {
+    return view('register-success');
+})->name('register-success');
+
+Route::post('/register/store', [RegisterController::class, 'store'])->name('register.store');

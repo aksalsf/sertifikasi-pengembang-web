@@ -8,12 +8,17 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-    public function create(Request $request) {
+    public function store(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
         $data = $request->all();
         $data['password'] = Hash::make($data['password']);
-        $data['total_gpa'] = round(($data['math'] + $data['indonesian'] + $data['english']) / 3, 2);
 
         User::create($data);
-        return redirect('/admin/login');
+        return redirect('/register-success');
     }
 }
